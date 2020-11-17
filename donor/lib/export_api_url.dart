@@ -1,1 +1,1 @@
-String server_url = "http://50e8807ffc6e.ngrok.io/";
+String server_url = "http://a10a67d09250.ngrok.io/";

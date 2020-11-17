@@ -15,6 +15,9 @@ class _ControllerState extends State<Controller> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     count = (prefs.getInt("counter"));
     print(count);
+    if (count == null) {
+      count = 2;
+    }
     setState(() {});
   }
 

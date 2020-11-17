@@ -3,6 +3,7 @@ import 'package:donor/screens/homescreen/home.dart';
 import 'package:donor/screens/homescreen/profile.dart';
 import 'package:donor/screens/homescreen/search.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -11,40 +12,29 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String name = "";
-
-  _getUsername() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    name = prefs.getString("username");
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _getUsername();
-  }
+  static List<Widget> _widgetOptions = <Widget>[
+    HomeTab(),
+    SearchTab(),
+    DonateTab(),
+    ProfileTab(),
+  ];
 
   int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            if (_currentIndex == 0) HomeTab(),
-            if (_currentIndex == 1) ProfileTab(),
-            if (_currentIndex == 2) DonateTab(),
-            if (_currentIndex == 3) ProfileTab(),
-          ],
-        ),
+        child: _widgetOptions.elementAt(_currentIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
         // backgroundColor: Colors.blue,
         currentIndex: _currentIndex,
-        // type: BottomNavigationBarType.fixed,
+        type: BottomNavigationBarType.fixed,
         items: [
           BottomNavigationBarItem(
             backgroundColor: Colors.blue[400],

@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:donor/export_api_url.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 
 import '../homescreen.dart';
 
@@ -27,22 +30,34 @@ class _RegisterState extends State<Register> {
   }
 
   _submit(mycontext) async {
+    FocusScope.of(context).requestFocus(new FocusNode());
+
     var client = http.Client();
     var uriResponse = await client.get(server_url +
         "signup?first_name=${myController.text}&last_name=${lastNameController.text}&username=${userNameController.text}&password=${passwordController.text}&email=${emailController.text}");
     client.close();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt("counter", 1);
-    await prefs.setString("username", userNameController.text);
-    await prefs.setString("lastName", lastNameController.text);
+    Map<String, dynamic> resp = jsonDecode(uriResponse.body.toString());
+    if (resp["result"] != "Please write carefully") {
+      if (resp["result"] != "username or email exists") {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setInt("counter", 1);
+        await prefs.setString("username", userNameController.text);
+        await prefs.setString("lastName", lastNameController.text);
 
-    await prefs.setString("password", passwordController.text);
+        await prefs.setString("password", passwordController.text);
 
-    await prefs.setString("firstname", myController.text);
-    await prefs.setString("email", emailController.text);
+        await prefs.setString("firstname", myController.text);
+        await prefs.setString("email", emailController.text);
 
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (_) => HomeScreen()));
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (_) => HomeScreen()));
+      }
+    }
+
+    Toast.show(resp["result"], context,
+        duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+    Toast.show("Make sure you are connected to internet", context,
+        duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
   }
 
   @override
@@ -53,11 +68,13 @@ class _RegisterState extends State<Register> {
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 12.0),
-              child: Text("Register",
-                  style: TextStyle(
-                    fontSize: 32.0,
-                    fontWeight: FontWeight.bold,
-                  )),
+              child: Text(
+                "Register",
+                style: TextStyle(
+                  fontSize: 32.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             _inputWidets(myController, "First Name"),
             _inputWidets(lastNameController, "Last Name"),
