@@ -1,6 +1,9 @@
 from fastapi import FastAPI 
 import sqlite3
 app = FastAPI()
+from pydantic import BaseModel
+import json
+import collections
 
 
 @app.get("/")
@@ -105,3 +108,34 @@ async def get_primary_key(username):
     conn.commit()
     conn.close()
     return {"result": result[0][6]}
+
+
+@app.get("/donate_blood")
+async def donate_blood_donor(username, name, gender, email, phone, weight, blood_group):
+    conn = sqlite3.connect("website.db")    
+    email = email.split("@")
+    conn.execute("INSERT INTO dob (username, name, gender, email_header, email_footer, phone, weight, blood_group) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [username, 
+    name, gender, email[0], email[1], phone, weight, blood_group])
+    conn.commit()
+    conn.close()
+    return {"result": "Sucessfully Added"}
+
+@app.get("/get_group")
+async def getgroup(blood_group: str):
+    output = []
+    conn = sqlite3.connect("website.db")
+    rows = conn.execute("SELECT * FROM dob WHERE blood_group=?", [blood_group])
+    objects_list = []
+    for row in rows:
+        d = collections.OrderedDict()
+        d["username"] = row[0]
+        d["name"] = row[1]
+        d["gender"] = row[2]
+        d["email"] = row[3]+"@"+row[4]
+        d["phone"] = row[5]
+        d["weight"] = row[6]
+        d["blood_group"] = row[7]
+        objects_list.append(d)
+    conn.commit()
+    conn.close()
+    return objects_list
