@@ -52,14 +52,19 @@ class _FormPageState extends State<FormPage> {
   _donateBlood() async {
     FocusScope.of(context).requestFocus(new FocusNode());
 
-    var client = http.Client();
-    String group = blood_group.replaceAll("+", "%2B");
+    try {
+      var client = http.Client();
+      String group = blood_group.replaceAll("+", "%2B");
 
-    var response = await client.get(server_url +
-        "donate_blood?username=$username&name=${nameController.text}&gender=${gender}&email=${emailController.text}&phone=${phoneController.text}&weight=${weightController.text}&blood_group=${group}");
-    Map<String, dynamic> results = jsonDecode(response.body.toString());
-    Toast.show(results["result"], context,
-        duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+      var response = await client.get(server_url +
+          "donate_blood?username=$username&name=${nameController.text}&gender=${gender}&email=${emailController.text}&phone=${phoneController.text}&weight=${weightController.text}&blood_group=${group}");
+      Map<String, dynamic> results = jsonDecode(response.body.toString());
+      Toast.show(results["result"], context,
+          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+    } catch (e) {
+      Toast.show("Error: Make sure you are connected to internet", context,
+          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+    }
   }
 
   @override

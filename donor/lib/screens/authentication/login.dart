@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:donor/models/user.dart';
-import 'package:donor/screens/authentication/register.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
@@ -23,6 +22,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   _submit() async {
     FocusScope.of(context).requestFocus(new FocusNode());
+    Toast.show("LOGGING YOU IN...", context,
+        duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
 
     try {
       var client = http.Client();
@@ -103,8 +104,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 borderRadius: BorderRadius.circular(30.0),
               ),
               child: FlatButton(
-                  onPressed: () => Navigator.pushReplacement(
-                      context, MaterialPageRoute(builder: (_) => Register())),
+                  onPressed: () => Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (_) => LoginScreen())),
                   child: Text(
                     "Or Register First",
                     style: TextStyle(color: Colors.white, fontSize: 20.0),

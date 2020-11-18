@@ -20,14 +20,19 @@ class _GroupSearchListState extends State<GroupSearchList> {
   int triedtofetched = 0;
 
   _getData() async {
-    String group = widget.bloodGroup.replaceAll("+", "%2B");
-    var client = http.Client();
-    var response =
-        await client.get(server_url + "get_group?blood_group=$group");
-    List<dynamic> responsedata = jsonDecode(response.body.toString());
-    donation = responsedata.map((e) => BloodDonation.fromJson(e)).toList();
-    triedtofetched = 1;
-    setState(() {});
+    try {
+      String group = widget.bloodGroup.replaceAll("+", "%2B");
+      var client = http.Client();
+      var response =
+          await client.get(server_url + "get_group?blood_group=$group");
+      List<dynamic> responsedata = jsonDecode(response.body.toString());
+      donation = responsedata.map((e) => BloodDonation.fromJson(e)).toList();
+      triedtofetched = 1;
+      setState(() {});
+    } catch (e) {
+      triedtofetched = 2;
+      setState(() {});
+    }
   }
 
   Widget _oneTile(BloodDonation bd) {
@@ -64,6 +69,12 @@ class _GroupSearchListState extends State<GroupSearchList> {
         return Scaffold(
           body: Center(
             child: Text("Loading..."),
+          ),
+        );
+      } else if (triedtofetched == 2) {
+        return Scaffold(
+          body: Center(
+            child: Text("Error: Make sure you are connected to internet"),
           ),
         );
       } else {

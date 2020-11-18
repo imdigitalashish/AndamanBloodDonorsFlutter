@@ -48,25 +48,30 @@ class _ProfileTabState extends State<ProfileTab> {
   _updateUser() async {
     FocusScope.of(context).requestFocus(new FocusNode());
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String currentUsername = prefs.getString("username");
-    String currentEmail = prefs.getString("email");
-    var client = http.Client();
-    var response = await client.get(server_url +
-        "update_user?pk=$primaryKey&name=${myController.text}&currentuser=$currentUsername&currentemail=$currentEmail&lastname=${lastNameController.text}&username=${userNameController.text}&password=${passwordController.text}&email=${emailController.text}");
-    Map<String, dynamic> userResponse = jsonDecode(response.body.toString());
-    if (userResponse != "username or email exists") {
-      await prefs.setInt("counter", 1);
-      await prefs.setString("username", userNameController.text);
-      await prefs.setString("lastName", lastNameController.text);
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String currentUsername = prefs.getString("username");
+      String currentEmail = prefs.getString("email");
+      var client = http.Client();
+      var response = await client.get(server_url +
+          "update_user?pk=$primaryKey&name=${myController.text}&currentuser=$currentUsername&currentemail=$currentEmail&lastname=${lastNameController.text}&username=${userNameController.text}&password=${passwordController.text}&email=${emailController.text}");
+      Map<String, dynamic> userResponse = jsonDecode(response.body.toString());
+      if (userResponse != "username or email exists") {
+        await prefs.setInt("counter", 1);
+        await prefs.setString("username", userNameController.text);
+        await prefs.setString("lastName", lastNameController.text);
 
-      await prefs.setString("password", passwordController.text);
+        await prefs.setString("password", passwordController.text);
 
-      await prefs.setString("firstname", myController.text);
-      await prefs.setString("email", emailController.text);
+        await prefs.setString("firstname", myController.text);
+        await prefs.setString("email", emailController.text);
+      }
+      Toast.show(userResponse["result"], context,
+          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+    } catch (e) {
+      Toast.show("Error Make sure you are connected to internet", context,
+          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
     }
-    Toast.show(userResponse["result"], context,
-        duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
   }
 
   _logoutUser() async {
@@ -122,7 +127,7 @@ class _ProfileTabState extends State<ProfileTab> {
             child: FlatButton(
                 onPressed: () => _updateUser(),
                 child: Text(
-                  "Register",
+                  "Save Changes",
                   style: TextStyle(color: Colors.white, fontSize: 20.0),
                 )),
           ),

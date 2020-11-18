@@ -17,13 +17,18 @@ class _ViewDonationsState extends State<ViewDonations> {
   int triedtofetched = 0;
 
   _getData() async {
-    var client = http.Client();
-    var response =
-        await client.get(server_url + "get_user_donated?username=dspashish");
-    List<dynamic> responsedata = jsonDecode(response.body.toString());
-    donation = responsedata.map((e) => BloodDonation.fromJson(e)).toList();
-    triedtofetched = 1;
-    setState(() {});
+    try {
+      var client = http.Client();
+      var response =
+          await client.get(server_url + "get_user_donated?username=dspashish");
+      List<dynamic> responsedata = jsonDecode(response.body.toString());
+      donation = responsedata.map((e) => BloodDonation.fromJson(e)).toList();
+      triedtofetched = 1;
+      setState(() {});
+    } catch (e) {
+      triedtofetched = 2;
+      setState(() {});
+    }
   }
 
   _deleteMyDonation(pk) async {
@@ -84,6 +89,13 @@ class _ViewDonationsState extends State<ViewDonations> {
           appBar: AppBar(title: Text("Your Donations")),
           body: Center(
             child: Text("Loading..."),
+          ),
+        );
+      } else if (triedtofetched == 2) {
+        return Scaffold(
+          appBar: AppBar(title: Text("Your Donations")),
+          body: Center(
+            child: Text("Error: Make sure you are connected to internet"),
           ),
         );
       } else {
