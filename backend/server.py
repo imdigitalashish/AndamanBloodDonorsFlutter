@@ -2,8 +2,17 @@ from fastapi import FastAPI
 import sqlite3
 app = FastAPI()
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
+
 import json
 import collections
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 
 @app.get("/")
@@ -38,18 +47,31 @@ async def signUp(first_name: str, last_name: str, username: str, password: str, 
 
 @app.get("/login")
 async def login(username, password):
-    output = []
     conn = sqlite3.connect("website.db")
-    cursor = conn.execute(f"SELECT * FROM users WHERE username=? and password=?", [username, password])
-    for i in cursor:
-        output.append(i)
-    conn.commit()
-    conn.close()
-    if len(output) != 0:
-        return {"result": "Success.. Loging in"}
-    else:
+    rows = conn.execute(f"SELECT * FROM users WHERE username=? and password=?", [username, password])
+    objects_list =rows.fetchall()
+    result = {}
+    if objects_list != []:
+        for row in objects_list:
+            d = collections.OrderedDict()
+            d["firstname"] = row[0]
+            d["lastname"] = row[1]
+            d["username"] = row[2]
+            d["password"] =row[3]
+            d["email_header"] = row[4]+"@"+row[5]
 
-        return {"result": "No User Exists"}
+            # d["email"] = row[3]+"@"+row[4]
+            # d["phone"] = row[5]
+            # d["weight"] = row[6]
+            # d["blood_group"] = row[7]
+            result.update(d)
+        conn.commit()
+        conn.close()
+        return result
+    else:
+        conn.commit()
+        conn.close()
+        return {"result": "Invalid Credentials"}
 
 
 @app.get("/get_all_user")
@@ -139,3 +161,33 @@ async def getgroup(blood_group: str):
     conn.commit()
     conn.close()
     return objects_list
+
+
+@app.get("/get_user_donated")
+async def get_user_donated(username):
+    conn = sqlite3.connect("website.db")
+    rows = conn.execute("SELECT * FROM dob WHERE username=?", [username])
+    objects_list = []
+    for row in rows:
+        d = collections.OrderedDict()
+        d["username"] = row[0]
+        d["name"] = row[1]
+        d["gender"] = row[2]
+        d["email"] = row[3]+"@"+row[4]
+        d["phone"] = row[5]
+        d["weight"] = row[6]
+        d["blood_group"] = row[7]
+        d["pk"] = row[8]
+        objects_list.append(d)
+    conn.commit()
+    conn.close()
+    return objects_list
+
+
+@app.get("/delete_blood_group")
+async def delete_my_group(pk):
+    conn = sqlite3.connect("website.db")
+    conn.execute("DELETE FROM dob WHERE pk=?", [pk])
+    conn.commit()
+    conn.close()
+    return {"result": "Deleted"}

@@ -4,30 +4,36 @@ import 'package:donor/models/blood_donate.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:donor/export_api_url.dart';
+import 'package:toast/toast.dart';
 
-class GroupSearchList extends StatefulWidget {
-  final String bloodGroup;
-
-  const GroupSearchList({Key key, this.bloodGroup});
-
+class ViewDonations extends StatefulWidget {
   @override
-  _GroupSearchListState createState() => _GroupSearchListState();
+  _ViewDonationsState createState() => _ViewDonationsState();
 }
 
-class _GroupSearchListState extends State<GroupSearchList> {
+class _ViewDonationsState extends State<ViewDonations> {
   List<BloodDonation> donation = [];
 
   int triedtofetched = 0;
 
   _getData() async {
-    String group = widget.bloodGroup.replaceAll("+", "%2B");
     var client = http.Client();
     var response =
-        await client.get(server_url + "get_group?blood_group=$group");
+        await client.get(server_url + "get_user_donated?username=dspashish");
     List<dynamic> responsedata = jsonDecode(response.body.toString());
     donation = responsedata.map((e) => BloodDonation.fromJson(e)).toList();
     triedtofetched = 1;
     setState(() {});
+  }
+
+  _deleteMyDonation(pk) async {
+    var client = http.Client();
+    var response = await client.get(server_url + "delete_blood_group?pk=$pk");
+    Map<String, dynamic> results = jsonDecode(response.body.toString());
+
+    Toast.show(results["result"], context,
+        duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+    _getData();
   }
 
   Widget _oneTile(BloodDonation bd) {
@@ -39,6 +45,19 @@ class _GroupSearchListState extends State<GroupSearchList> {
         Text("phone: ${bd.phone}"),
         Text("weight: ${bd.weight}"),
         Text("blood group: ${bd.bloodGroup}"),
+        Container(
+          margin: EdgeInsets.all(20.0),
+          decoration: BoxDecoration(
+            color: Colors.red,
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          child: FlatButton(
+            onPressed: () => _deleteMyDonation(bd.pk),
+            child: Text("DELETE",
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold)),
+          ),
+        )
       ],
     );
   }
@@ -62,19 +81,22 @@ class _GroupSearchListState extends State<GroupSearchList> {
     if (donation.isEmpty) {
       if (triedtofetched == 0) {
         return Scaffold(
+          appBar: AppBar(title: Text("Your Donations")),
           body: Center(
             child: Text("Loading..."),
           ),
         );
       } else {
         return Scaffold(
+          appBar: AppBar(title: Text("Your Donations")),
           body: Center(
-            child: Text("No data found :("),
+            child: Text("No haven't donated yet :("),
           ),
         );
       }
     } else {
       return Scaffold(
+        appBar: AppBar(title: Text("Your Donations")),
         body: Container(
           child: getWidgets(),
         ),

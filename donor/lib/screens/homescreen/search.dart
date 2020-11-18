@@ -15,8 +15,9 @@ class _SearchTabState extends State<SearchTab> {
       child: ListView(
         children: [
           _row1(context),
-          _row2(),
-          _row3(),
+          _row2(context),
+          _row3(context),
+          _row4(context),
         ],
       ),
     );
@@ -31,7 +32,7 @@ Widget _row1(BuildContext context) {
           onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) => GroupSearchList(bloodGroup: "AB+"))),
+                  builder: (_) => GroupSearchList(bloodGroup: "A+"))),
           child: Container(
             // padding: EdgeInsets.all(20),
             // margin: EdgeInsets.all(20),
@@ -60,6 +61,10 @@ Widget _row1(BuildContext context) {
       ),
       Expanded(
         child: FlatButton(
+          onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => GroupSearchList(bloodGroup: "O+"))),
           child: Container(
             // padding: EdgeInsets.all(20),
             // margin: EdgeInsets.all(20),
@@ -89,11 +94,15 @@ Widget _row1(BuildContext context) {
   );
 }
 
-Widget _row2() {
+Widget _row2(BuildContext context) {
   return Row(
     children: [
       Expanded(
         child: FlatButton(
+          onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => GroupSearchList(bloodGroup: "B+"))),
           child: Container(
             // padding: EdgeInsets.all(20),
             // margin: EdgeInsets.all(20),
@@ -121,7 +130,10 @@ Widget _row2() {
       ),
       Expanded(
         child: FlatButton(
-          onPressed: () => print("Hello"),
+          onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => GroupSearchList(bloodGroup: "AB+"))),
           child: Container(
             // margin: EdgeInsets.all(20),
             height: 200,
@@ -150,11 +162,15 @@ Widget _row2() {
   );
 }
 
-Widget _row3() {
+Widget _row3(BuildContext context) {
   return Row(
     children: [
       Expanded(
         child: FlatButton(
+          onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => GroupSearchList(bloodGroup: "O-"))),
           child: Container(
             // padding: EdgeInsets.all(20),
             // margin: EdgeInsets.all(20),
@@ -184,6 +200,10 @@ Widget _row3() {
       ),
       Expanded(
         child: FlatButton(
+          onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => GroupSearchList(bloodGroup: "B-"))),
           child: Container(
             // padding: EdgeInsets.all(20),
             margin: EdgeInsets.only(top: 20),
@@ -200,6 +220,77 @@ Widget _row3() {
             child: Center(
               child: Text(
                 "B-",
+                style: TextStyle(
+                    fontSize: 32.0,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+Widget _row4(BuildContext context) {
+  return Row(
+    children: [
+      Expanded(
+        child: FlatButton(
+          onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => GroupSearchList(bloodGroup: "A-"))),
+          child: Container(
+            // padding: EdgeInsets.all(20),
+            // margin: EdgeInsets.all(20),
+            margin: EdgeInsets.only(top: 20),
+
+            height: 200,
+            decoration: new BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              gradient: new LinearGradient(
+                colors: [
+                  Colors.blueAccent[200],
+                  Colors.blueAccent[400],
+                ],
+              ),
+            ),
+            child: Center(
+              child: Text(
+                "A-",
+                style: TextStyle(
+                    fontSize: 32.0,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ),
+      ),
+      Expanded(
+        child: FlatButton(
+          onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => GroupSearchList(bloodGroup: "AB-"))),
+          child: Container(
+            // padding: EdgeInsets.all(20),
+            margin: EdgeInsets.only(top: 20),
+            height: 200,
+            decoration: new BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              gradient: new LinearGradient(
+                colors: [
+                  Colors.orange[500],
+                  Colors.orange[700],
+                ],
+              ),
+            ),
+            child: Center(
+              child: Text(
+                "AB-",
                 style: TextStyle(
                     fontSize: 32.0,
                     color: Colors.white,

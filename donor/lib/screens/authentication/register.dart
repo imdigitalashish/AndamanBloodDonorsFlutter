@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:donor/screens/authentication/login.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:donor/export_api_url.dart';
@@ -94,6 +95,23 @@ class _RegisterState extends State<Register> {
                   onPressed: () => _submit(context),
                   child: Text(
                     "Register",
+                    style: TextStyle(color: Colors.white, fontSize: 20.0),
+                  )),
+            ),
+            Container(
+              margin: EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(16.0),
+              height: 60.0,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.green,
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              child: FlatButton(
+                  onPressed: () => Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (_) => LoginScreen())),
+                  child: Text(
+                    "Log in",
                     style: TextStyle(color: Colors.white, fontSize: 20.0),
                   )),
             ),

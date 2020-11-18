@@ -6,6 +6,7 @@ class BloodDonation {
   String phone;
   String weight;
   String bloodGroup;
+  int pk;
 
   BloodDonation(
       {this.username,
@@ -14,7 +15,8 @@ class BloodDonation {
       this.email,
       this.phone,
       this.weight,
-      this.bloodGroup});
+      this.bloodGroup,
+      this.pk});
 
   BloodDonation.fromJson(Map<String, dynamic> json) {
     username = json['username'];
@@ -24,6 +26,7 @@ class BloodDonation {
     phone = json['phone'];
     weight = json['weight'];
     bloodGroup = json['blood_group'];
+    pk = json["pk"];
   }
 
   Map<String, dynamic> toJson() {
