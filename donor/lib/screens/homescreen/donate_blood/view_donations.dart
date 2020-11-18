@@ -4,6 +4,7 @@ import 'package:donor/models/blood_donate.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:donor/export_api_url.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
 class ViewDonations extends StatefulWidget {
@@ -17,11 +18,14 @@ class _ViewDonationsState extends State<ViewDonations> {
   int triedtofetched = 0;
 
   _getData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String username = prefs.getString("username");
     try {
       var client = http.Client();
       var response =
-          await client.get(server_url + "get_user_donated?username=dspashish");
+          await client.get(server_url + "get_user_donated?username=$username");
       List<dynamic> responsedata = jsonDecode(response.body.toString());
+      print(responsedata);
       donation = responsedata.map((e) => BloodDonation.fromJson(e)).toList();
       triedtofetched = 1;
       setState(() {});
